@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="FHCalendarWebApp:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>FHCalendarWebApp</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="FHCalendarWebApp-1.0-SNAPSHOT.war">
+      <element id="artifact" artifact-name="FHCalendarWebApp:war exploded" />
+    </root>
+  </artifact>
+</component>
