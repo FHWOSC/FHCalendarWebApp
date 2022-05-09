@@ -1,5 +1,5 @@
 'use strict';
-
+const parser = require('../parser')
 
 /**
  * export the splan
@@ -11,15 +11,10 @@
  * format String output format of calendar (optional)
  * returns List
  **/
-exports.getSplan = function(url,nameformat,roomformat,format) {
-  return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = {};
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
-    }
+exports.getSplan = function (url, nameformat, roomformat, format) {
+  return new Promise(function (resolve, reject) {
+    resolve(parser.parse(url))
+
   });
 }
 
