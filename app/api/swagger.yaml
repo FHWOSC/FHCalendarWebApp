@@ -1,0 +1,142 @@
+---
+swagger: "2.0"
+info:
+  description: "This is a sample server Petstore server.  You can find out more about\
+    \     Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net,\
+    \ #swagger](http://swagger.io/irc/).      For this sample, you can use the api\
+    \ key `special-key` to test the authorization     filters."
+  version: "1.0.0"
+  title: "FHW Calendar Exporter"
+  termsOfService: "http://swagger.io/terms/"
+  contact:
+    email: "apiteam@swagger.io"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "localhost:8080"
+basePath: "/v2"
+tags:
+- name: "splan"
+  description: "Everything about the splan exporter"
+  externalDocs:
+    description: "Find out more"
+    url: "https://intern.fh-wedel.de/~splan/"
+schemes:
+- "https"
+- "http"
+paths:
+  /splan:
+    get:
+      tags:
+      - "splan"
+      summary: "export the splan"
+      description: "exports the splan"
+      operationId: "getSplan"
+      produces:
+      - "application/pdf"
+      - "text/calendar"
+      - "application/json"
+      parameters:
+      - name: "nameformat"
+        in: "query"
+        description: "Format of person names for calendar output"
+        required: false
+        type: "string"
+        default: "abbr"
+        enum:
+        - "none"
+        - "abbr"
+        - "first_last"
+        - "first_last_abbr"
+        - "last_first"
+        - "last_first_abbr"
+      - name: "roomformat"
+        in: "query"
+        description: "Format of room names for calendar output"
+        required: false
+        type: "string"
+        default: "abbr"
+        enum:
+        - "none"
+        - "abbr"
+        - "full_name"
+        - "full_name_and_abbr"
+      - name: "format"
+        in: "query"
+        description: "output format of calendar"
+        required: false
+        type: "string"
+        default: "json"
+        enum:
+        - "json"
+        - "ics"
+        - "pdf"
+      - name: "url"
+        in: "query"
+        description: "url of custom splan"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Event"
+        "400":
+          description: "Invalid status value"
+      x-swagger-router-controller: "Splan"
+definitions:
+  Event:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+        example: 1539156785093603
+      name:
+        type: "string"
+        format: "string"
+        example: "FOOP"
+      employees:
+        type: "array"
+        items:
+          type: "string"
+          example: "uhl"
+      room:
+        type: "string"
+        example: "HS06"
+      day:
+        type: "string"
+        format: "string"
+        example: "MO"
+        enum:
+        - "MO"
+        - "DI"
+        - "MI"
+        - "DO"
+        - "FR"
+        - "SA"
+        - "SO"
+        - "NV"
+      start:
+        type: "string"
+        format: "string"
+        example: "20220510T080000"
+      end:
+        type: "string"
+        format: "string"
+        example: "20220510T091500"
+    example:
+      name: "FOOP"
+      start: "20220510T080000"
+      end: "20220510T091500"
+      id: 1539156785093603
+      employees:
+      - "uhl"
+      - "uhl"
+      day: "MO"
+      room: "HS06"
+externalDocs:
+  description: "Find out more about Swagger"
+  url: "http://swagger.io"
