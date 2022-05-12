@@ -12,9 +12,6 @@ const parser = require('../parser')
  * returns List
  **/
 exports.getSplan = function (url, nameformat, roomformat, format) {
-  return new Promise(function (resolve, reject) {
-    resolve(parser.parse(url))
-
-  });
+  return parser.parseAsync(url);
 }
 
