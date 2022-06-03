@@ -25,21 +25,45 @@ schemes:
 - "https"
 - "http"
 paths:
-  /splan:
+  /splan/json:
     get:
       tags:
       - "splan"
-      summary: "export the splan"
-      description: "exports the splan"
-      operationId: "getSplan"
+      summary: "Export the splan to JSON"
+      operationId: "getSplanAsJson"
       produces:
-      - "application/pdf"
-      - "text/calendar"
       - "application/json"
       parameters:
+      - name: "url"
+        in: "query"
+        description: "URL of custom splan"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Plan"
+        "400":
+          description: "Invalid status value"
+      x-swagger-router-controller: "Splan"
+  /splan/ics:
+    get:
+      tags:
+      - "splan"
+      summary: "Export the splan to the ICalender format"
+      operationId: "getSplanAsIcs"
+      produces:
+      - "text/calendar"
+      parameters:
+      - name: "url"
+        in: "query"
+        description: "URL of custom splan"
+        required: true
+        type: "string"
       - name: "nameformat"
         in: "query"
-        description: "Format of person names for calendar output"
+        description: "Format of person names in output"
         required: false
         type: "string"
         default: "abbr"
@@ -52,91 +76,291 @@ paths:
         - "last_first_abbr"
       - name: "roomformat"
         in: "query"
-        description: "Format of room names for calendar output"
+        description: "Format of room names in output"
         required: false
         type: "string"
         default: "abbr"
         enum:
         - "none"
         - "abbr"
-        - "full_name"
-        - "full_name_and_abbr"
-      - name: "format"
-        in: "query"
-        description: "output format of calendar"
-        required: false
-        type: "string"
-        default: "json"
-        enum:
-        - "json"
-        - "ics"
-        - "pdf"
-      - name: "url"
-        in: "query"
-        description: "url of custom splan"
-        required: true
-        type: "string"
+        - "first_last"
+        - "first_last_abbr"
+        - "last_first"
+        - "last_first_abbr"
       responses:
         "200":
           description: "successful operation"
-          schema:
-            type: "array"
-            items:
-              $ref: "#/definitions/Event"
+        "400":
+          description: "Invalid status value"
+      x-swagger-router-controller: "Splan"
+  /splan/pdf:
+    get:
+      tags:
+      - "splan"
+      summary: "Export the splan to PDF"
+      operationId: "getSplanAsPdf"
+      produces:
+      - "application/pdf"
+      parameters:
+      - name: "url"
+        in: "query"
+        description: "URL of custom splan"
+        required: true
+        type: "string"
+      - name: "nameformat"
+        in: "query"
+        description: "Format of person names in output"
+        required: false
+        type: "string"
+        default: "abbr"
+        enum:
+        - "none"
+        - "abbr"
+        - "first_last"
+        - "first_last_abbr"
+        - "last_first"
+        - "last_first_abbr"
+      - name: "roomformat"
+        in: "query"
+        description: "Format of room names in output"
+        required: false
+        type: "string"
+        default: "abbr"
+        enum:
+        - "none"
+        - "abbr"
+        - "first_last"
+        - "first_last_abbr"
+        - "last_first"
+        - "last_first_abbr"
+      - name: "orientation"
+        in: "query"
+        description: "Orientation of the the table (horizontal or vertical)"
+        required: false
+        type: "string"
+        default: "h"
+        enum:
+        - "h"
+        - "v"
+      responses:
+        "200":
+          description: "successful operation"
         "400":
           description: "Invalid status value"
       x-swagger-router-controller: "Splan"
 definitions:
-  Event:
+  Plan:
     type: "object"
     properties:
-      id:
-        type: "integer"
-        format: "int64"
-        example: 1539156785093603
+      title:
+        type: "string"
+        format: "string"
+        example: "B_Inf5"
+      courses:
+        type: "array"
+        items:
+          $ref: "#/definitions/Course"
+    example:
+      courses:
+      - rooms:
+        - name: "Hörsaal 6"
+          abbr: "HS06"
+        - name: "Hörsaal 6"
+          abbr: "HS06"
+        name: "FOOP"
+        time:
+          start: "8:00"
+          length: 1
+          end: "9:15"
+          day: 1
+        employees:
+        - last_name: "Uhlig"
+          abbr: "uhl"
+          first_name: "Christian"
+        - last_name: "Uhlig"
+          abbr: "uhl"
+          first_name: "Christian"
+      - rooms:
+        - name: "Hörsaal 6"
+          abbr: "HS06"
+        - name: "Hörsaal 6"
+          abbr: "HS06"
+        name: "FOOP"
+        time:
+          start: "8:00"
+          length: 1
+          end: "9:15"
+          day: 1
+        employees:
+        - last_name: "Uhlig"
+          abbr: "uhl"
+          first_name: "Christian"
+        - last_name: "Uhlig"
+          abbr: "uhl"
+          first_name: "Christian"
+      title: "B_Inf5"
+  Course:
+    type: "object"
+    properties:
+      ID:
+        type: "string"
+        format: "string"
+        example: "SB024"
       name:
         type: "string"
         format: "string"
         example: "FOOP"
+      time:
+        $ref: "#/definitions/TimeInfo"
       employees:
         type: "array"
         items:
-          type: "string"
-          example: "uhl"
-      room:
-        type: "string"
-        example: "HS06"
+          $ref: "#/definitions/Employee"
+      rooms:
+        type: "array"
+        items:
+          $ref: "#/definitions/Room"
+    example:
+      rooms:
+      - name: "Hörsaal 6"
+        abbr: "HS06"
+      - name: "Hörsaal 6"
+        abbr: "HS06"
+      name: "FOOP"
+      time:
+        start: "8:00"
+        length: 1
+        end: "9:15"
+        day: 1
+      employees:
+      - last_name: "Uhlig"
+        abbr: "uhl"
+        first_name: "Christian"
+      - last_name: "Uhlig"
+        abbr: "uhl"
+        first_name: "Christian"
+  TimeInfo:
+    type: "object"
+    properties:
       day:
-        type: "string"
-        format: "string"
-        example: "MO"
-        enum:
-        - "MO"
-        - "DI"
-        - "MI"
-        - "DO"
-        - "FR"
-        - "SA"
-        - "SO"
-        - "NV"
+        type: "integer"
+        format: "int64"
+        example: 1
+        minimum: 0
+        maximum: 6
       start:
         type: "string"
         format: "string"
-        example: "20220510T080000"
+        example: "8:00"
       end:
         type: "string"
         format: "string"
-        example: "20220510T091500"
+        example: "9:15"
+      length:
+        type: "integer"
+        format: "int64"
+        example: 1
     example:
-      name: "FOOP"
-      start: "20220510T080000"
-      end: "20220510T091500"
-      id: 1539156785093603
-      employees:
-      - "uhl"
-      - "uhl"
-      day: "MO"
-      room: "HS06"
+      start: "8:00"
+      length: 1
+      end: "9:15"
+      day: 1
+  Employee:
+    type: "object"
+    properties:
+      first_name:
+        type: "string"
+        format: "string"
+        example: "Christian"
+      last_name:
+        type: "string"
+        format: "string"
+        example: "Uhlig"
+      abbr:
+        type: "string"
+        format: "string"
+        example: "uhl"
+    example:
+      last_name: "Uhlig"
+      abbr: "uhl"
+      first_name: "Christian"
+  Room:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+        format: "string"
+        example: "Hörsaal 6"
+      abbr:
+        type: "string"
+        format: "string"
+        example: "HS06"
+    example:
+      name: "Hörsaal 6"
+      abbr: "HS06"
+  NameFormat:
+    type: "string"
+    enum:
+    - "none"
+    - "abbr"
+    - "first_last"
+    - "first_last_abbr"
+    - "last_first"
+    - "last_first_abbr"
+  RoomFormat:
+    type: "string"
+    enum:
+    - "none"
+    - "abbr"
+    - "first_last"
+    - "first_last_abbr"
+    - "last_first"
+    - "last_first_abbr"
+parameters:
+  urlParam:
+    name: "url"
+    in: "query"
+    description: "URL of custom splan"
+    required: true
+    type: "string"
+  nameFormatParam:
+    name: "nameformat"
+    in: "query"
+    description: "Format of person names in output"
+    required: false
+    type: "string"
+    default: "abbr"
+    enum:
+    - "none"
+    - "abbr"
+    - "first_last"
+    - "first_last_abbr"
+    - "last_first"
+    - "last_first_abbr"
+  roomFormatParam:
+    name: "roomformat"
+    in: "query"
+    description: "Format of room names in output"
+    required: false
+    type: "string"
+    default: "abbr"
+    enum:
+    - "none"
+    - "abbr"
+    - "first_last"
+    - "first_last_abbr"
+    - "last_first"
+    - "last_first_abbr"
+  orientationParam:
+    name: "orientation"
+    in: "query"
+    description: "Orientation of the the table (horizontal or vertical)"
+    required: false
+    type: "string"
+    default: "h"
+    enum:
+    - "h"
+    - "v"
 externalDocs:
   description: "Find out more about Swagger"
   url: "http://swagger.io"

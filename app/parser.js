@@ -5,25 +5,26 @@ const { JSDOM } = require('jsdom');
 /**
  * An object representing a time slot.
  * @typedef {{ "start": string, 
- *            "end": string
+ *             "end": string
  *          }} TimeSlot
  */
 
 /**
  * An object representing a course's time info.
  * @typedef {{ "day": number,
- *            "start": number,
- *            "end": number,
- *            "length": number
+ *             "start": number,
+ *             "end": number,
+ *             "length": number
  *          }} TimeInfo
  */
 
 /**
  * An object representing a course.
- * @typedef {{ "name": string, 
- *            "time": TimeInfo,
- *            "employees": Employee[],
- *            "rooms": Room[]
+ * @typedef {{ "ID": string
+ *             "name": string, 
+ *             "time": TimeInfo,
+ *             "employees": Employee[],
+ *             "rooms": Room[]
  *          }} Course
  */
 
@@ -45,7 +46,7 @@ const { JSDOM } = require('jsdom');
 /**
  * An object representing a room.
  * @typedef {{ "name": string
- *            "abbr": string
+ *             "abbr": string
  *          }} Room
  */
 
@@ -152,7 +153,9 @@ function parseCourse(elem, day, col) {
     const length = elem.hasAttribute("colspan") ? +elem.getAttribute("colspan") : 1;
 
     if (elem.childElementCount > 0) {
-        const courseName = elem.querySelector("td.splan_veranstaltung").innerHTML.replaceAll("&nbsp;", " ").trim();
+        const spanCourseName = elem.querySelector("td.splan_veranstaltung span");
+        const courseID = spanCourseName.title;
+        const courseName = spanCourseName.innerHTML.replaceAll("&nbsp;", " ").trim();
 
         const employeeAttrs = [...elem.querySelectorAll(".splan_mitarbeiter a")];
         const employeeObjs = employeeAttrs.map(empl => {
@@ -175,6 +178,7 @@ function parseCourse(elem, day, col) {
         });
 
         courses.push({
+            "ID": courseID,
             "name": courseName,
             "time": {
                 "day": day,
